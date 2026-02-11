@@ -9,6 +9,7 @@ public class EnemyController : MonoBehaviour
     private Animator animator;
 
     private float detectionDistance = 5f;
+    private bool isDead = false;
 
     void Start()
     {
@@ -30,6 +31,8 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
+        if (isDead) return;
+
         if (player != null)
         {
             if (Vector3.Distance(transform.position, player.transform.position) < detectionDistance)
@@ -43,7 +46,10 @@ public class EnemyController : MonoBehaviour
 
     private void Die()
     {
-        Destroy(gameObject);
+        navMeshAgent.SetDestination(transform.position);
+        isDead = true;
+        animator.Play("Die");
+        Destroy(gameObject, 5f);
     }
 }
 
