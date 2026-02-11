@@ -12,8 +12,16 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private ParticleSystem hitParticleSystem;
 
     private int ammo;
-    private int maxAmmo;
-    private int chargerSize;
+    [SerializeField] private int maxAmmo;
+    [SerializeField] private int chargerSize;
+
+
+    /* 
+     * 
+     * Disparamos si tenemos balas (ammo)
+     * Podemos recargar y se nos rellena hasta charger size o maxAmmo (si es mas pequeño que chargersize)
+     * 
+     */
 
     void Awake()
     {
@@ -21,11 +29,18 @@ public class WeaponController : MonoBehaviour
         lineRenderer.enabled = false;
     }
 
+    void Start()
+    {
+        ammo = chargerSize;
+        UIManager.Instance.SetAmmo(ammo);
+        UIManager.Instance.SetMaxAmmo(maxAmmo);
+    }
+
     void Update()
     {
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            ShootRaycastFromCenter();
+            Shoot();
         }
 
         if (Keyboard.current.rKey.wasPressedThisFrame)
@@ -34,9 +49,21 @@ public class WeaponController : MonoBehaviour
         }
     }
 
+    void Shoot()
+    {
+        // LE TENGO QUE RESTAR UNA BALA. SI NO TIENE BALAS, NO DISPARO.
+        if (ammo > 0)
+        {
+            ammo--;
+            UIManager.Instance.SetAmmo(ammo);
+            ShootRaycastFromCenter();
+        }
+    }
+
     private void Reload()
     {
-        weaponAnimationController.Reload();
+        if (maxAmmo > 0 && ammo < chargerSize)
+            weaponAnimationController.Reload();
     }
 
     void ShootRaycastFromCenter()
@@ -104,4 +131,36 @@ public class WeaponController : MonoBehaviour
         lineRenderer.SetPosition(1, endPoint);
         */
     }
+
+    //public void RequestReload()
+    //{
+    //    int bulletsToRemove = 0;
+    //    if (maxAmmo < 
+    //        chargerSize)
+    //        bulletsToRemove = maxAmmo;
+    //    else
+    //        bulletsToRemove = chargerSize;
+
+    //    ammo += bulletsToRemove;
+    //    maxAmmo -= bulletsToRemove;
+    //    UIManager.Instance.SetAmmo(ammo);
+    //    UIManager.Instance.SetMaxAmmo(maxAmmo);
+    //}
+
+    public void RequestReload()
+    {
+        if (ammo >= chargerSize || maxAmmo <= 0)
+            return;
+
+        int spaceLeft = chargerSize - ammo;
+
+        int bulletsToLoad = Mathf.Min(spaceLeft, maxAmmo);
+
+        ammo += bulletsToLoad;
+        maxAmmo -= bulletsToLoad;
+
+        UIManager.Instance.SetAmmo(ammo);
+        UIManager.Instance.SetMaxAmmo(maxAmmo);
+    }
+
 }
