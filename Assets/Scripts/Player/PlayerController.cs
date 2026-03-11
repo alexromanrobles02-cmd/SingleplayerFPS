@@ -48,6 +48,7 @@ public class PlayerController : MonoBehaviour
     Vector3 vel = Vector3.zero;
 
     private int health = 100;
+    private int maxHealth = 100;
 
     private float damageCooldown = 0;
     private bool canBeDamaged = true;
@@ -70,6 +71,11 @@ public class PlayerController : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
         capsuleCol = GetComponent<CapsuleCollider>();
+
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.SetHealth(health, maxHealth);
+        }
     }
 
     private void FixedUpdate()
@@ -208,18 +214,27 @@ public class PlayerController : MonoBehaviour
     {
         if (!canBeDamaged) return;
 
-        if (other.gameObject.tag == "Enemy")
+        if (other.gameObject.CompareTag("Enemy"))
         {
             damageCooldown = 2f;
             canBeDamaged = false;
-            Debug.Log("DAMAGE!");
-            Damage(25);
+            
+            int damageTaken = 25;
+            EnemyController enemy = other.GetComponentInParent<EnemyController>();
+            if (enemy != null)
+            {
+                damageTaken = enemy.damageToPlayer;
+            }
+
+            Debug.Log("DAMAGE! Taken: " + damageTaken);
+            Damage(damageTaken);
         }
     }
 
     private void Damage(int amount)
     {
         health -= amount;
+        UIManager.Instance.SetHealth(health, maxHealth);
         if (health <= 0) Die(); 
     }
 

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(LineRenderer))]
@@ -15,11 +15,18 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private int maxAmmo;
     [SerializeField] private int chargerSize;
 
+    [Header("Ammo Regeneration")]
+    [SerializeField] private bool enableAmmoRegen = true;
+    [SerializeField] private float ammoRegenInterval = 3f; // Tiempo en segundos para regenerar
+    [SerializeField] private int ammoRegenAmount = 5;      // Cantidad de balas a regenerar
+    [SerializeField] private int maxReserveCapacity = 60;  // Límite máximo de balas en la reserva
+    private float regenTimer;
+
 
     /* 
      * 
      * Disparamos si tenemos balas (ammo)
-     * Podemos recargar y se nos rellena hasta charger size o maxAmmo (si es mas peque�o que chargersize)
+     * Podemos recargar y se nos rellena hasta charger size o maxAmmo (si es mas pequeño que chargersize)
      * 
      */
 
@@ -32,12 +39,29 @@ public class WeaponController : MonoBehaviour
     void Start()
     {
         ammo = chargerSize;
-        UIManager.Instance.SetAmmo(ammo);
-        UIManager.Instance.SetMaxAmmo(maxAmmo);
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.SetAmmo(ammo);
+            UIManager.Instance.SetMaxAmmo(maxAmmo);
+        }
     }
 
     void Update()
     {
+        if (enableAmmoRegen && maxAmmo < maxReserveCapacity)
+        {
+            regenTimer += Time.deltaTime;
+            if (regenTimer >= ammoRegenInterval)
+            {
+                regenTimer = 0f; // Reiniciamos el temporizador
+                maxAmmo = Mathf.Min(maxAmmo + ammoRegenAmount, maxReserveCapacity);
+                if (UIManager.Instance != null)
+                {
+                    UIManager.Instance.SetMaxAmmo(maxAmmo);
+                }
+            }
+        }
+
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             Shoot();

@@ -1,9 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class InteractableObject : MonoBehaviour
 {
-    public void Interact()
+    public virtual void Interact()
     {
         Debug.Log("InteractableObject Interacted!");
     }
 }
+

@@ -9,6 +9,13 @@ EditorBuildSettings:
     path: Assets/Scenes/Test-Movement.unity
     guid: 8124e5870f4fd4c779e7a5f994e84ad1
   - enabled: 1
-    path: Assets/Scenes/TestMove.unity
+    path: Assets/Scenes/Nivel1.unity
     guid: 55c67028e5de132428122ad14818298c
+  - enabled: 1
+    path: Assets/Scenes/Nivel2.unity
+    guid: 194cfc4a7daced54eb1185dfe246775b
+  - enabled: 1
+    path: Assets/Scenes/VictoryScene.unity
+    guid: bd7e79eb8fbe9554c9d141c3d62e9165
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0
